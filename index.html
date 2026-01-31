@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Sürpriz 💛</title>
+
+<style>
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #ffcc70, #ff8c94);
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  color: white;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+}
+
+h1 {
+  font-size: 4vw;
+  margin-bottom: 30px;
+}
+
+button {
+  font-size: 3vw;
+  padding: 15px 35px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="center">
+  <h1 id="text">Seni seviyorum ama neden?</h1>
+  <button id="btn">Devam et</button>
+</div>
+
+<canvas id="fireworks"></canvas>
+
+<audio id="music" loop>
+  <source src="sarki.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const texts = [
+  "Güzelliğinden dolayı mı?",
+  "Gözlerin?",
+  "Saçların?",
+  "Fiziğin?",
+  "İlgin?",
+  "Seni neden sevdiğimi söyleyemem,\nseni sevdiğimi de söylemem.\nAma sana sevdalandığıma eminim.\n\nÇünkü sinirlensen de,\nsinir etsen de,\nmutlu etsen de,\nkavga etsek de…\n\nHer durumda ve her anlamda yanında olmak,\nseninle daha iyi olmak istiyorum.\n\nSeni çok seviyorum.\nSevgililer günümüz kutlu olsun 💛\nVe son bir sürprizim var sevgilim…"
+];
+
+let index = 0;
+const textEl = document.getElementById("text");
+const btn = document.getElementById("btn");
+const music = document.getElementById("music");
+
+// Fireworks
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = [];
+
+function explode() {
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height / 2,
+      vx: (Math.random() - 0.5) * 6,
+      vy: (Math.random() - 0.5) * 6,
+      life: 60,
+      color: `hsl(${Math.random()*360},100%,70%)`
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,2.5,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+  });
+  particles = particles.filter(p => p.life > 0);
+  requestAnimationFrame(animate);
+}
+animate();
+
+btn.addEventListener("click", () => {
+
+  // Müziği ilk tıklamada başlat
+  if (music.paused) music.play();
+
+  if (index < texts.length) {
+    textEl.innerText = texts[index];
+    index++;
+    return;
+  }
+
+  // Fireworks başlasın
+  btn.style.display = "none";
+
+  const fireInterval = setInterval(explode, 300);
+
+  setTimeout(() => {
+    clearInterval(fireInterval);
+    textEl.innerText = "Kameranı aç ve balkona çık sevgilim 🎆💛";
+  }, 4000);
+});
+</script>
+
+</body>
+</html>
